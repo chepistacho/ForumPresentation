@@ -1,40 +1,142 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="utf-8">
-    <title>Mera Presentación</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Estilos de Reveal.js pa' que la vuelta se vea chimba -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
-    <!-- Tema oscuro, puede cambiar "dracula" por "black" o "white" -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/dracula.min.css">
+  <meta charset="utf-8">
+  <title>TED Talk - Relevo Generacional</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css">
+  
+  <style>
+    /* El canvas de fondo pa' cuando metamos el script de las partículas */
+    #canvas-particulas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+    
+    /* CSS pa' asegurar que el texto se lea chimba sobre las fotos */
+    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: bold; }
+    .texto-sombra { text-shadow: 2px 2px 8px rgba(0,0,0,0.9); }
+    
+    /* Estructura pa' dividir pantalla (Slide 4 y 13) */
+    .pantalla-dividida { display: flex; align-items: center; justify-content: center; gap: 40px; }
+    .mitad { flex: 1; text-align: left; }
+    .qr-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+  </style>
 </head>
-
 <body>
-    <div class="reveal">
-        <div class="slides">
+  
+  <!-- Acá va a renderizar la vuelta de las partículas luego -->
+  <div id="canvas-particulas"></div>
 
-            <!-- Cada <section> es una diapositiva distinta -->
-            <section>
-                <h1>Título del Proyecto</h1>
-                <p>Oe, esta es la portada de la presentación.</p>
-            </section>
+  <div class="reveal">
+    <div class="slides">
+      
+      <!-- SLIDE 1 -->
+      <section>
+        <h2>RELEVO GENERACIONAL: LA VENTAJA QUE NADIE ESTÁ APROVECHANDO</h2>
+        <h4 style="color: #ff2a2a;">@centrodeeventosupb</h4>
+      </section>
 
-            <section>
-                <h2>El mero contenido</h2>
-                <p>Aquí es donde le vamos a tirar el texto, las imágenes de los juegos o lo que necesite.</p>
-            </section>
+      <!-- SLIDE 2: Pilla el data-background-opacity, eso le tira la capa oscura pa' que el texto se lea -->
+      <section data-background-image="foto1.jpg" data-background-opacity="0.3">
+        <h1 class="texto-sombra">¿Un gran auditorio solo para hacer grados?</h1>
+      </section>
 
+      <!-- SLIDE 3 -->
+      <section>
+        <h3>Los eventos no llegaron a la Universidad.</h3>
+        <h3>La Universidad decidió encontrarse con el mundo.</h3>
+      </section>
+
+      <!-- SLIDE 4: Pantalla dividida con Flexbox -->
+      <section>
+        <div class="pantalla-dividida">
+          <div class="mitad">
+            <h2>Academia +<br>Industria +<br>Ciudad</h2>
+          </div>
+          <div class="mitad">
+            <img src="foto2.jpg" alt="Foto 2" style="border-radius: 15px; max-width: 100%;">
+          </div>
         </div>
+      </section>
+
+      <!-- SLIDE 5 -->
+      <section data-background-image="foto3.jpg" data-background-opacity="0.4">
+        <h2 class="texto-sombra">Los eventos nunca fueron el objetivo.</h2>
+        <h2 class="texto-sombra" style="color: #ff2a2a;">El impacto sí.</h2>
+      </section>
+
+      <!-- SLIDE 6 -->
+      <section>
+        <h2>Un evento trae personas.</h2>
+        <h2>Una <span style="color: #ff2a2a;">comunidad</span> trae transformación.</h2>
+      </section>
+
+      <!-- SLIDE 7 -->
+      <section>
+        <h2>El talento crece a la velocidad de la confianza.</h2>
+      </section>
+
+      <!-- SLIDE 8 -->
+      <section data-background-image="foto4.jpg" data-background-opacity="0.3">
+        <h3 class="texto-sombra">La experiencia construye el camino.</h3>
+        <h3 class="texto-sombra">Las nuevas generaciones descubren nuevas rutas.</h3>
+      </section>
+
+      <!-- SLIDE 9 -->
+      <section>
+        <h1>Una visión.</h1>
+        <h1 style="color: #ff2a2a;">Dos generaciones.</h1>
+      </section>
+
+      <!-- SLIDE 10 -->
+      <section>
+        <h3>El crecimiento no ocurre cuando una generación reemplaza a otra.</h3>
+        <h3 style="color: #ff2a2a;">Ocurre cuando trabajan juntas.</h3>
+      </section>
+
+      <!-- SLIDE 11 -->
+      <section>
+        <h3>Los jóvenes no son el futuro.</h3>
+        <h3>Son el presente que muchas organizaciones aún no ven.</h3>
+      </section>
+
+      <!-- SLIDE 12 -->
+      <section data-background-image="foto5.jpg" data-background-opacity="0.2">
+        <h1 class="texto-sombra">El futuro no se hereda.</h1>
+        <h1 class="texto-sombra" style="color: #ff2a2a;">Se construye.</h1>
+      </section>
+
+      <!-- SLIDE 13: Foto 6 y los QR -->
+      <section>
+        <div class="pantalla-dividida">
+          <div class="mitad">
+            <img src="foto6.jpg" alt="Foto 6" style="border-radius: 15px;">
+          </div>
+          <div class="mitad" style="text-align: center;">
+            <div class="qr-box">
+              <img src="qr-memorias.png" alt="QR Memorias" style="width: 250px; margin: 0;">
+              <p style="color: black; margin: 0; font-size: 0.7em;">QR con memorias</p>
+            </div>
+            <div class="qr-box">
+              <img src="qr-redes.png" alt="QR Redes" style="width: 250px; margin: 0;">
+              <p style="color: black; margin: 0; font-size: 0.7em;">@centrodeeventosupb</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
-    <script>
-        // Con esta mondá arranca la presentación
-        Reveal.initialize();
-    </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+  <script>
+    Reveal.initialize({
+      controls: false, // Apagamos las flechitas pa' que no estorben visualmente
+      progress: true,  // Barrita de progreso abajo (la puede quitar poniendo false)
+      center: true,
+      hash: true,
+      transition: 'fade', // Transición limpia, nada de maricadas que den mareo
+    });
+  </script>
 </body>
-
 </html>
