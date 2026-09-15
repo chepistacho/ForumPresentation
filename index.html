@@ -8,37 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css">
   
-  
   <style>
-    /* Interfaz flotante */
-#ui-flotante {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 1000;
-  opacity: 0;
-  transition: opacity 0.4s ease-in-out;
-  display: flex;
-  gap: 15px;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 10px 20px;
-  border-radius: 10px;
-}
-/* Esta clase la inyecta el JS cuando usted mueve el mouse */
-#ui-flotante.activo {
-  opacity: 1;
-}
-.btn-ui {
-  background: #ff2a2a;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 5px;
-}
-.btn-ui:hover { background: #cc0000; }
     /* El canvas de fondo pa' cuando metamos el script de las partículas */
     #canvas-particulas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
     
@@ -50,11 +20,45 @@
     .pantalla-dividida { display: flex; align-items: center; justify-content: center; gap: 40px; }
     .mitad { flex: 1; text-align: left; }
     .qr-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+
+    /* Interfaz flotante */
+    #ui-flotante {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      display: flex;
+      gap: 15px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+    #ui-flotante.activo { opacity: 1; }
+    .btn-ui {
+      background: #ff2a2a;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .btn-ui:hover { background: #cc0000; }
   </style>
 </head>
 <body>
   
-  <!-- Acá va a renderizar la vuelta de las partículas luego -->
+  <!-- Interfaz flotante de control -->
+  <div id="ui-flotante">
+    <button class="btn-ui" onclick="Reveal.prev()">◄</button>
+    <button class="btn-ui" id="btn-idioma">PT</button>
+    <button class="btn-ui" onclick="Reveal.next()">►</button>
+  </div>
+
+  <!-- Canvas de fondo para partículas -->
   <div id="canvas-particulas"></div>
 
   <div class="reveal">
@@ -62,92 +66,154 @@
       
       <!-- SLIDE 1 -->
       <section>
-  <h2 data-es="RELEVO GENERACIONAL: LA VENTAJA QUE NADIE ESTÁ APROVECHANDO" 
-      data-pt="REVEZAMENTO GERACIONAL: A VANTAGEM QUE NINGUÉM ESTÁ APROVEITANDO">
-      RELEVO GENERACIONAL: LA VENTAJA QUE NADIE ESTÁ APROVECHANDO
-  </h2>
-</section>
+        <h2 data-es="RELEVO GENERACIONAL: LA VENTAJA QUE NADIE ESTÁ APROVECHANDO" 
+            data-pt="REVEZAMENTO GERACIONAL: A VANTAGEM QUE NINGUÉM ESTÁ APROVEITANDO">
+          RELEVO GENERACIONAL: LA VENTAJA QUE NADIE ESTÁ APROVECHANDO
+        </h2>
+        <h4 style="color: #ff2a2a;">@centrodeeventosupb</h4>
+      </section>
 
-      <!-- SLIDE 2: Pilla el data-background-opacity, eso le tira la capa oscura pa' que el texto se lea -->
-      <section data-background-image="FOTO 1.jpg" data-background-opacity="0.3">
-        <h1 class="texto-sombra">¿Un gran auditorio solo para hacer grados?</h1>
+      <!-- SLIDE 2 -->
+      <section data-background-image="foto1.jpg" data-background-opacity="0.3">
+        <h1 class="texto-sombra" 
+            data-es="¿Un gran auditorio solo para hacer grados?" 
+            data-pt="Um grande auditório só para colar grau?">
+          ¿Un gran auditorio solo para hacer grados?
+        </h1>
       </section>
 
       <!-- SLIDE 3 -->
       <section>
-        <h3>Los eventos no llegaron a la Universidad.</h3>
-        <h3>La Universidad decidió encontrarse con el mundo.</h3>
+        <h3 data-es="Los eventos no llegaron a la Universidad." 
+            data-pt="Os eventos não chegaram à Universidade.">
+          Los eventos no llegaron a la Universidad.
+        </h3>
+        <h3 data-es="La Universidad decidió encontrarse con el mundo." 
+            data-pt="A Universidade decidiu ir ao encontro do mundo.">
+          La Universidad decidió encontrarse con el mundo.
+        </h3>
       </section>
 
-      <!-- SLIDE 4: Pantalla dividida con Flexbox -->
+      <!-- SLIDE 4 -->
       <section>
         <div class="pantalla-dividida">
           <div class="mitad">
-            <h2>Academia +<br>Industria +<br>Ciudad</h2>
+            <h2 data-es="Academia +<br>Industria +<br>Ciudad" 
+                data-pt="Academia +<br>Indústria +<br>Cidade">
+              Academia +<br>Industria +<br>Ciudad
+            </h2>
           </div>
           <div class="mitad">
-            <img src="FOTO 2.jpg" alt="FOTO 2" style="border-radius: 15px; max-width: 100%;">
+            <img src="foto2.jpg" alt="Foto 2" style="border-radius: 15px; max-width: 100%;">
           </div>
         </div>
       </section>
 
       <!-- SLIDE 5 -->
-      <section data-background-image="FOTO 3.jpeg" data-background-opacity="0.4">
-        <h2 class="texto-sombra">Los eventos nunca fueron el objetivo.</h2>
-        <h2 class="texto-sombra" style="color: #ff2a2a;">El impacto sí.</h2>
+      <section data-background-image="foto3.jpg" data-background-opacity="0.4">
+        <h2 class="texto-sombra" 
+            data-es="Los eventos nunca fueron el objetivo." 
+            data-pt="Os eventos nunca foram o objetivo.">
+          Los eventos nunca fueron el objetivo.
+        </h2>
+        <h2 class="texto-sombra" style="color: #ff2a2a;" 
+            data-es="El impacto sí." 
+            data-pt="O impacto sim.">
+          El impacto sí.
+        </h2>
       </section>
 
       <!-- SLIDE 6 -->
       <section>
-        <h2>Un evento trae personas.</h2>
-        <h2>Una <span style="color: #ff2a2a;">comunidad</span> trae transformación.</h2>
+        <h2 data-es="Un evento trae personas." 
+            data-pt="Um evento traz pessoas.">
+          Un evento trae personas.
+        </h2>
+        <h2>
+          <span data-es="Una " data-pt="Uma ">Una </span>
+          <span style="color: #ff2a2a;" data-es="comunidad" data-pt="comunidade">comunidad</span>
+          <span data-es=" trae transformación." data-pt=" traz transformação."> trae transformación.</span>
+        </h2>
       </section>
 
       <!-- SLIDE 7 -->
       <section>
-        <h2>El talento crece a la velocidad de la confianza.</h2>
+        <h2 data-es="El talento crece a la velocidad de la confianza." 
+            data-pt="O talento cresce na velocidade da confiança.">
+          El talento crece a la velocidad de la confianza.
+        </h2>
       </section>
 
       <!-- SLIDE 8 -->
-      <section data-background-image="FOTO 4.jpg" data-background-opacity="0.3">
-        <h3 class="texto-sombra">La experiencia construye el camino.</h3>
-        <h3 class="texto-sombra">Las nuevas generaciones descubren nuevas rutas.</h3>
+      <section data-background-image="foto4.jpg" data-background-opacity="0.3">
+        <h3 class="texto-sombra" 
+            data-es="La experiencia construye el camino." 
+            data-pt="A experiência constrói o caminho.">
+          La experiencia construye el camino.
+        </h3>
+        <h3 class="texto-sombra" 
+            data-es="Las nuevas generaciones descubren nuevas rutas." 
+            data-pt="As novas gerações descobre novas rotas.">
+          Las nuevas generaciones descubren nuevas rutas.
+        </h3>
       </section>
 
       <!-- SLIDE 9 -->
       <section>
-        <h1>Una visión.</h1>
-        <h1 style="color: #ff2a2a;">Dos generaciones.</h1>
+        <h1 data-es="Una visión." data-pt="Uma visão.">Una visión.</h1>
+        <h1 style="color: #ff2a2a;" data-es="Dos generaciones." data-pt="Duas gerações.">Dos generaciones.</h1>
       </section>
 
       <!-- SLIDE 10 -->
       <section>
-        <h3>El crecimiento no ocurre cuando una generación reemplaza a otra.</h3>
-        <h3 style="color: #ff2a2a;">Ocurre cuando trabajan juntas.</h3>
+        <h3 data-es="El crecimiento no ocurre cuando una generación reemplaza a otra." 
+            data-pt="O crescimento não acontece quando uma geração substitui outra.">
+          El crecimiento no ocurre cuando una generación reemplaza a otra.
+        </h3>
+        <h3 style="color: #ff2a2a;" 
+            data-es="Ocurre cuando trabajan juntas." 
+            data-pt="Acontece quando trabalham juntas.">
+          Ocurre cuando trabajan juntas.
+        </h3>
       </section>
 
       <!-- SLIDE 11 -->
       <section>
-        <h3>Los jóvenes no son el futuro.</h3>
-        <h3>Son el presente que muchas organizaciones aún no ven.</h3>
+        <h3 data-es="Los jóvenes no son el futuro." 
+            data-pt="Os jovens não são o futuro.">
+          Los jóvenes no son el futuro.
+        </h3>
+        <h3 data-es="Son el presente que muchas organizaciones aún no ven." 
+            data-pt="São o presente que muitas organizações ainda não veem.">
+          Son el presente que muchas organizaciones aún no ven.
+        </h3>
       </section>
 
       <!-- SLIDE 12 -->
-      <section data-background-image="FOTO 5.jpg" data-background-opacity="0.2">
-        <h1 class="texto-sombra">El futuro no se hereda.</h1>
-        <h1 class="texto-sombra" style="color: #ff2a2a;">Se construye.</h1>
+      <section data-background-image="foto5.jpg" data-background-opacity="0.2">
+        <h1 class="texto-sombra" 
+            data-es="El futuro no se hereda." 
+            data-pt="O futuro não se herda.">
+          El futuro no se hereda.
+        </h1>
+        <h1 class="texto-sombra" style="color: #ff2a2a;" 
+            data-es="Se construye." 
+            data-pt="Constrói-se.">
+          Se construye.
+        </h1>
       </section>
 
-      <!-- SLIDE 13: FOTO 6 y los QR -->
+      <!-- SLIDE 13 -->
       <section>
         <div class="pantalla-dividida">
           <div class="mitad">
-            <img src="FOTO 6.png" alt="FOTO 6" style="border-radius: 15px;">
+            <img src="foto6.jpg" alt="Foto 6" style="border-radius: 15px;">
           </div>
           <div class="mitad" style="text-align: center;">
             <div class="qr-box">
               <img src="qr-memorias.png" alt="QR Memorias" style="width: 250px; margin: 0;">
-              <p style="color: black; margin: 0; font-size: 0.7em;">QR con memorias</p>
+              <p style="color: black; margin: 0; font-size: 0.7em;" 
+                 data-es="QR con memorias" data-pt="QR com memórias">QR con memorias</p>
             </div>
             <div class="qr-box">
               <img src="qr-redes.png" alt="QR Redes" style="width: 250px; margin: 0;">
@@ -163,50 +229,41 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
   <script>
     Reveal.initialize({
-      controls: false, // Apagamos las flechitas pa' que no estorben visualmente
-      progress: true,  // Barrita de progreso abajo (la puede quitar poniendo false)
+      controls: false,
+      progress: true,
       center: true,
       hash: true,
-      transition: 'fade', // Transición limpia, nada de maricadas que den mareo
+      transition: 'fade',
+    });
+
+    // Lógica para mostrar/ocultar UI con el mouse
+    const ui = document.getElementById('ui-flotante');
+    let temporizadorMouse;
+
+    document.addEventListener('mousemove', () => {
+      ui.classList.add('activo');
+      clearTimeout(temporizadorMouse);
+      temporizadorMouse = setTimeout(() => {
+        ui.classList.remove('activo');
+      }, 2000); 
+    });
+
+    // Lógica de cambio de idioma
+    const btnIdioma = document.getElementById('btn-idioma');
+    let idiomaActual = 'es';
+
+    btnIdioma.addEventListener('click', () => {
+      idiomaActual = idiomaActual === 'es' ? 'pt' : 'es';
+      btnIdioma.innerText = idiomaActual === 'es' ? 'PT' : 'ES';
+
+      document.querySelectorAll('[data-es]').forEach(elemento => {
+        if (idiomaActual === 'pt') {
+          elemento.innerHTML = elemento.getAttribute('data-pt');
+        } else {
+          elemento.innerHTML = elemento.getAttribute('data-es');
+        }
+      });
     });
   </script>
 </body>
-  <div id="ui-flotante">
-  <!-- Reveal.prev() y Reveal.next() son las funciones nativas de la librería -->
-  <button class="btn-ui" onclick="Reveal.prev()">◄</button>
-  <button class="btn-ui" id="btn-idioma">PT</button>
-  <button class="btn-ui" onclick="Reveal.next()">►</button>
-</div>
-  <script>
-  // 1. Lógica pa' que la vuelta aparezca con el mouse y se esconda sola
-  const ui = document.getElementById('ui-flotante');
-  let temporizadorMouse;
-
-  document.addEventListener('mousemove', () => {
-    ui.classList.add('activo');
-    clearTimeout(temporizadorMouse);
-    // Se esconde a los 2 segundos (2000 ms) de dejar el mouse quieto
-    temporizadorMouse = setTimeout(() => {
-      ui.classList.remove('activo');
-    }, 2000); 
-  });
-
-  // 2. Lógica pa' cambiar el idioma a lo maldita sea
-  const btnIdioma = document.getElementById('btn-idioma');
-  let idiomaActual = 'es'; // Arranca en español
-
-  btnIdioma.addEventListener('click', () => {
-    idiomaActual = idiomaActual === 'es' ? 'pt' : 'es';
-    btnIdioma.innerText = idiomaActual === 'es' ? 'PT' : 'ES'; // Cambia el texto del botón
-
-    // Busca todos los textos que tengan traducciones listas
-    document.querySelectorAll('[data-es]').forEach(elemento => {
-      if (idiomaActual === 'pt') {
-        elemento.innerHTML = elemento.getAttribute('data-pt');
-      } else {
-        elemento.innerHTML = elemento.getAttribute('data-es');
-      }
-    });
-  });
-</script>
 </html>
