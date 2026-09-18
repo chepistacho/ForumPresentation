@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8">
   <title>TED Talk - Relevo Generacional</title>
@@ -7,25 +8,133 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css">
-  
+
   <style>
     /* El canvas de fondo pa' cuando metamos el script de las partículas */
-    #canvas-particulas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-    
+    #canvas-particulas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 50%;
+      height: 100%;
+      z-index: -1;
+      transition: transform 0.8s ease-in-out;
+    }
+
     /* CSS pa' asegurar que el texto se lea chimba sobre las fotos */
-    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-weight: bold; }
-    .texto-sombra { text-shadow: 2px 2px 8px rgba(0,0,0,0.9); }
-    
+    .reveal h1,
+    .reveal h2,
+    .reveal h3 {
+      text-transform: none;
+      font-weight: bold;
+    }
+
+    /* Reducción ligera y margen superior para no pisar los logos */
+    .reveal h1 {
+      font-size: 2.1em;
+      margin-top: 40px;
+    }
+
+    .reveal h2 {
+      font-size: 1.5em;
+      margin-top: 40px;
+    }
+
+    .reveal h3 {
+      font-size: 1.1em;
+      margin-top: 40px;
+    }
+
+    .texto-sombra {
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Campos para imágenes en las esquinas superiores */
+    .logo-esquina {
+      position: fixed;
+      top: 30px;
+      z-index: 2000;
+      /* Por encima de todo */
+      width: 200px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-esquina img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .logo-izq {
+      left: 40px;
+    }
+
+    .logo-der {
+      right: 40px;
+    }
+
     /* Estructura pa' dividir pantalla (Slide 4 y 13) */
-    .pantalla-dividida { display: flex; align-items: center; justify-content: center; gap: 40px; }
-    .mitad { flex: 1; text-align: left; }
-    .qr-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+    .pantalla-dividida {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .mitad {
+      flex: 1;
+      text-align: left;
+    }
+
+    .qr-box {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    /* Alineación de bloque completo alternada para las diapositivas */
+    .reveal .slides>section:nth-child(odd) {
+      text-align: left;
+    }
+
+    .reveal .slides>section:nth-child(odd)>* {
+      margin-left: 0;
+      margin-right: auto;
+      max-width: 45%;
+    }
+
+    .reveal .slides>section:nth-child(even) {
+      text-align: right;
+    }
+
+    .reveal .slides>section:nth-child(even)>* {
+      margin-left: auto;
+      margin-right: 0;
+      max-width: 45%;
+    }
+
+    .contenedor-qrs {
+      display: flex;
+      gap: 40px;
+    }
+
+    .reveal .slides>section:nth-child(odd) .contenedor-qrs {
+      justify-content: flex-start;
+    }
+
+    .reveal .slides>section:nth-child(even) .contenedor-qrs {
+      justify-content: flex-end;
+    }
 
     /* Interfaz flotante */
-    #ui-flotante {
+    .ui-flotante {
       position: fixed;
       bottom: 30px;
-      right: 30px;
       z-index: 1000;
       opacity: 0;
       transition: opacity 0.4s ease-in-out;
@@ -35,7 +144,19 @@
       padding: 10px 20px;
       border-radius: 10px;
     }
-    #ui-flotante.activo { opacity: 1; }
+
+    .ui-flotante.activo {
+      opacity: 1;
+    }
+
+    #ui-derecha {
+      right: 30px;
+    }
+
+    #ui-izquierda {
+      left: 30px;
+    }
+
     .btn-ui {
       background: #ff2a2a;
       color: white;
@@ -46,15 +167,61 @@
       cursor: pointer;
       border-radius: 5px;
     }
-    .btn-ui:hover { background: #cc0000; }
+
+    .btn-ui:hover {
+      background: #cc0000;
+    }
+
+    /* Animaciones de entrada y salida para los textos de las diapositivas */
+    .reveal .slides section>* {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .reveal .slides section.present>* {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Efecto de cascada (stagger) para la entrada de los textos */
+    .reveal .slides section.present>*:nth-child(1) {
+      transition-delay: 0.2s;
+    }
+
+    .reveal .slides section.present>*:nth-child(2) {
+      transition-delay: 0.4s;
+    }
+
+    .reveal .slides section.present>*:nth-child(3) {
+      transition-delay: 0.6s;
+    }
+
+    .reveal .slides section.present>*:nth-child(4) {
+      transition-delay: 0.8s;
+    }
   </style>
 </head>
+
 <body>
-  
+
+  <!-- Campos de imagen fijos en las esquinas superiores -->
+  <div class="logo-esquina logo-izq">
+    <img src="ForumLogo.png" alt="Logo Forum">
+  </div>
+  <div class="logo-esquina logo-der">
+    <img src="LogoUPB90.png" alt="Logo UPB 90">
+  </div>
+
   <!-- Interfaz flotante de control -->
-  <div id="ui-flotante">
-    <button class="btn-ui" onclick="Reveal.prev()">◄</button>
+  <div id="ui-izquierda" class="ui-flotante">
+    <button class="btn-ui" onclick="toggleFullScreen()" title="Pantalla Completa">⛶</button>
     <button class="btn-ui" id="btn-idioma">PT</button>
+  </div>
+  <div id="ui-derecha" class="ui-flotante">
+    <button class="btn-ui" onclick="Reveal.prev()">◄</button>
+    <span id="indicador-diapositiva"
+      style="color: white; font-weight: bold; font-family: monospace; display: flex; align-items: center; justify-content: center; min-width: 50px; font-size: 16px;"></span>
     <button class="btn-ui" onclick="Reveal.next()">►</button>
   </div>
 
@@ -63,11 +230,11 @@
 
   <div class="reveal">
     <div class="slides">
-      
+
       <!-- SLIDE 1 -->
       <section>
-        <h2 data-es="RELEVO GENERACIONAL: LA VENTAJA QUE NADIE ESTÁ APROVECHANDO" 
-            data-pt="REVEZAMENTO GERACIONAL: A VANTAGEM QUE NINGUÉM ESTÁ APROVEITANDO">
+        <h2 data-es="RELEVO GENERACIONAL: LA VENTAJA QUE NADIE ESTÁ APROVECHANDO"
+          data-pt="REVEZAMENTO GERACIONAL: A VANTAGEM QUE NINGUÉM ESTÁ APROVEITANDO">
           RELEVO GENERACIONAL: LA VENTAJA QUE NADIE ESTÁ APROVECHANDO
         </h2>
         <h4 style="color: #ff2a2a;">@centrodeeventosupb</h4>
@@ -75,58 +242,45 @@
 
       <!-- SLIDE 2 -->
       <section data-background-image="FOTO 1.jpg" data-background-opacity="0.3">
-        <h1 class="texto-sombra" 
-            data-es="¿Un gran auditorio solo para hacer grados?" 
-            data-pt="Um grande auditório só para colar grau?">
+        <h1 class="texto-sombra" data-es="¿Un gran auditorio solo para hacer grados?"
+          data-pt="Um grande auditório só para colar grau?">
           ¿Un gran auditorio solo para hacer grados?
         </h1>
       </section>
 
       <!-- SLIDE 3 -->
       <section>
-        <h3 data-es="Los eventos no llegaron a la Universidad." 
-            data-pt="Os eventos não chegaram à Universidade.">
+        <h3 data-es="Los eventos no llegaron a la Universidad." data-pt="Os eventos não chegaram à Universidade.">
           Los eventos no llegaron a la Universidad.
         </h3>
-        <h3 data-es="La Universidad decidió encontrarse con el mundo." 
-            data-pt="A Universidade decidiu ir ao encontro do mundo.">
+        <h3 data-es="La Universidad decidió encontrarse con el mundo."
+          data-pt="A Universidade decidiu ir ao encontro do mundo.">
           La Universidad decidió encontrarse con el mundo.
         </h3>
       </section>
 
       <!-- SLIDE 4 -->
-      <section>
-        <div class="pantalla-dividida">
-          <div class="mitad">
-            <h2 data-es="Academia +<br>Industria +<br>Ciudad" 
-                data-pt="Academia +<br>Indústria +<br>Cidade">
-              Academia +<br>Industria +<br>Ciudad
-            </h2>
-          </div>
-          <div class="mitad">
-            <img src="FOTO 2.jpg" alt="FOTO  2" style="border-radius: 15px; max-width: 100%;">
-          </div>
-        </div>
+      <section data-background-image="FOTO 2.jpg" data-background-opacity="0.3">
+        <h2 class="texto-sombra" data-es="Academia +<br>Industria +<br>Ciudad"
+          data-pt="Academia +<br>Indústria +<br>Cidade">
+          Academia +<br>Industria +<br>Ciudad
+        </h2>
       </section>
 
       <!-- SLIDE 5 -->
       <section data-background-image="FOTO 3.jpeg" data-background-opacity="0.4">
-        <h2 class="texto-sombra" 
-            data-es="Los eventos nunca fueron el objetivo." 
-            data-pt="Os eventos nunca foram o objetivo.">
+        <h2 class="texto-sombra" data-es="Los eventos nunca fueron el objetivo."
+          data-pt="Os eventos nunca foram o objetivo.">
           Los eventos nunca fueron el objetivo.
         </h2>
-        <h2 class="texto-sombra" style="color: #ff2a2a;" 
-            data-es="El impacto sí." 
-            data-pt="O impacto sim.">
+        <h2 class="texto-sombra" style="color: #ff2a2a;" data-es="El impacto sí." data-pt="O impacto sim.">
           El impacto sí.
         </h2>
       </section>
 
       <!-- SLIDE 6 -->
       <section>
-        <h2 data-es="Un evento trae personas." 
-            data-pt="Um evento traz pessoas.">
+        <h2 data-es="Un evento trae personas." data-pt="Um evento traz pessoas.">
           Un evento trae personas.
         </h2>
         <h2>
@@ -138,22 +292,20 @@
 
       <!-- SLIDE 7 -->
       <section>
-        <h2 data-es="El talento crece a la velocidad de la confianza." 
-            data-pt="O talento cresce na velocidade da confiança.">
+        <h2 data-es="El talento crece a la velocidad de la confianza."
+          data-pt="O talento cresce na velocidade da confiança.">
           El talento crece a la velocidad de la confianza.
         </h2>
       </section>
 
       <!-- SLIDE 8 -->
       <section data-background-image="FOTO 4.jpg" data-background-opacity="0.3">
-        <h3 class="texto-sombra" 
-            data-es="La experiencia construye el camino." 
-            data-pt="A experiência constrói o caminho.">
+        <h3 class="texto-sombra" data-es="La experiencia construye el camino."
+          data-pt="A experiência constrói o caminho.">
           La experiencia construye el camino.
         </h3>
-        <h3 class="texto-sombra" 
-            data-es="Las nuevas generaciones descubren nuevas rutas." 
-            data-pt="As novas gerações descobre novas rotas.">
+        <h3 class="texto-sombra" data-es="Las nuevas generaciones descubren nuevas rutas."
+          data-pt="As novas gerações descobre novas rotas.">
           Las nuevas generaciones descubren nuevas rutas.
         </h3>
       </section>
@@ -166,59 +318,48 @@
 
       <!-- SLIDE 10 -->
       <section>
-        <h3 data-es="El crecimiento no ocurre cuando una generación reemplaza a otra." 
-            data-pt="O crescimento não acontece quando uma geração substitui outra.">
+        <h3 data-es="El crecimiento no ocurre cuando una generación reemplaza a otra."
+          data-pt="O crescimento não acontece quando uma geração substitui outra.">
           El crecimiento no ocurre cuando una generación reemplaza a otra.
         </h3>
-        <h3 style="color: #ff2a2a;" 
-            data-es="Ocurre cuando trabajan juntas." 
-            data-pt="Acontece quando trabalham juntas.">
+        <h3 style="color: #ff2a2a;" data-es="Ocurre cuando trabajan juntas."
+          data-pt="Acontece quando trabalham juntas.">
           Ocurre cuando trabajan juntas.
         </h3>
       </section>
 
       <!-- SLIDE 11 -->
       <section>
-        <h3 data-es="Los jóvenes no son el futuro." 
-            data-pt="Os jovens não são o futuro.">
+        <h3 data-es="Los jóvenes no son el futuro." data-pt="Os jovens não são o futuro.">
           Los jóvenes no son el futuro.
         </h3>
-        <h3 data-es="Son el presente que muchas organizaciones aún no ven." 
-            data-pt="São o presente que muitas organizações ainda não veem.">
+        <h3 data-es="Son el presente que muchas organizaciones aún no ven."
+          data-pt="São o presente que muitas organizações ainda não veem.">
           Son el presente que muchas organizaciones aún no ven.
         </h3>
       </section>
 
       <!-- SLIDE 12 -->
       <section data-background-image="FOTO 5.jpg" data-background-opacity="0.2">
-        <h1 class="texto-sombra" 
-            data-es="El futuro no se hereda." 
-            data-pt="O futuro não se herda.">
+        <h1 class="texto-sombra" data-es="El futuro no se hereda." data-pt="O futuro não se herda.">
           El futuro no se hereda.
         </h1>
-        <h1 class="texto-sombra" style="color: #ff2a2a;" 
-            data-es="Se construye." 
-            data-pt="Constrói-se.">
+        <h1 class="texto-sombra" style="color: #ff2a2a;" data-es="Se construye." data-pt="Constrói-se.">
           Se construye.
         </h1>
       </section>
 
       <!-- SLIDE 13 -->
-      <section>
-        <div class="pantalla-dividida">
-          <div class="mitad">
-            <img src="FOTO 6.png" alt="FOTO 6" style="border-radius: 15px;">
+      <section data-background-image="FOTO 6.png" data-background-opacity="0.3">
+        <div class="contenedor-qrs">
+          <div class="qr-box">
+            <img src="qr-memorias.png" alt="QR Memorias" style="width: 250px; margin: 0;">
+            <p style="color: black; margin: 0; font-size: 0.7em;" data-es="QR con memorias" data-pt="QR com memórias">QR
+              con memorias</p>
           </div>
-          <div class="mitad" style="text-align: center;">
-            <div class="qr-box">
-              <img src="qr-memorias.png" alt="QR Memorias" style="width: 250px; margin: 0;">
-              <p style="color: black; margin: 0; font-size: 0.7em;" 
-                 data-es="QR con memorias" data-pt="QR com memórias">QR con memorias</p>
-            </div>
-            <div class="qr-box">
-              <img src="qr-redes.png" alt="QR Redes" style="width: 250px; margin: 0;">
-              <p style="color: black; margin: 0; font-size: 0.7em;">@centrodeeventosupb</p>
-            </div>
+          <div class="qr-box">
+            <img src="qr-redes.png" alt="QR Redes" style="width: 250px; margin: 0;">
+            <p style="color: black; margin: 0; font-size: 0.7em;">@centrodeeventosupb</p>
           </div>
         </div>
       </section>
@@ -229,24 +370,54 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
   <script>
     Reveal.initialize({
+      width: 1280,
+      height: 720,
+      margin: 0.08,
       controls: false,
-      progress: true,
+      progress: false,
       center: true,
       hash: true,
       transition: 'fade',
+    }).then(() => {
+      actualizarIndicador();
+    });
+
+    // Lógica para actualizar indicador de diapositiva
+    function actualizarIndicador() {
+      const slideActual = Reveal.getIndices().h + 1;
+      const totalSlides = Reveal.getTotalSlides();
+      const indicador = document.getElementById('indicador-diapositiva');
+      if (indicador) {
+        indicador.innerText = `${slideActual} / ${totalSlides}`;
+      }
+    }
+
+    Reveal.on('slidechanged', () => {
+      actualizarIndicador();
     });
 
     // Lógica para mostrar/ocultar UI con el mouse
-    const ui = document.getElementById('ui-flotante');
+    const uis = document.querySelectorAll('.ui-flotante');
     let temporizadorMouse;
 
     document.addEventListener('mousemove', () => {
-      ui.classList.add('activo');
+      uis.forEach(ui => ui.classList.add('activo'));
       clearTimeout(temporizadorMouse);
       temporizadorMouse = setTimeout(() => {
-        ui.classList.remove('activo');
-      }, 2000); 
+        uis.forEach(ui => ui.classList.remove('activo'));
+      }, 2000);
     });
+
+    // Lógica de pantalla completa
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
 
     // Lógica de cambio de idioma
     const btnIdioma = document.getElementById('btn-idioma');
@@ -265,5 +436,921 @@
       });
     });
   </script>
+
+  <!-- Importación de p5.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+
+  <!-- Script para el sistema de partículas -->
+  <script>
+    let particles = [];
+    let vibrantChildren = [];
+    let currentSlide = 0;
+    let limpiarFondo = false;
+    let sF = 0.7; // Factor de escala para simulación a mitad de pantalla
+
+    function setup() {
+      let canvas = createCanvas(windowWidth / 2, windowHeight);
+      canvas.parent('canvas-particulas');
+
+      // Población inicial limpiecita
+      for (let i = 0; i < 90; i++) particles.push(new Particle('joven'));
+      for (let i = 0; i < 90; i++) particles.push(new Particle('vieja'));
+
+      let actualizarPosicionCanvas = (slideIdx) => {
+        let canvasDiv = document.getElementById('canvas-particulas');
+        if (canvasDiv) {
+          let esPar = (slideIdx + 1) % 2 === 0;
+          canvasDiv.style.transform = esPar ? 'translateX(0)' : 'translateX(100%)';
+        }
+      };
+      actualizarPosicionCanvas(0);
+
+      // ¡ACÁ ESTÁ LA SOLUCIÓN! Atrapamos el evento exacto del cambio
+      Reveal.on('slidechanged', (e) => {
+        currentSlide = e.indexh;
+        limpiarFondo = true; // Forzar borrado total del lienzo al cambiar de slide
+        actualizarPosicionCanvas(currentSlide);
+
+        // Si se devuelve al Slide 1 (índice 0)
+        if (currentSlide === 0) {
+          // Solo borramos a las del fórum
+          particles = particles.filter(p => p.tipo !== 'forum');
+
+          // A las que quedan, les reseteamos la pintura y la edad SIN tocar la posición
+          for (let p of particles) {
+            p.tipo = p.tipoOriginal; // Las que habían mutado a viejas vuelven a ser jóvenes
+            p.colTarget = [140, 140, 140]; // Lavamos la pintura a gris base
+            p.tieneVibrantes = false;
+            p.vida = 255; // Por si se habían atenuado
+          }
+          vibrantChildren = [];
+        }
+
+        // Si nos devolvemos antes del slide 5, limpiamos las hijas vibrantes
+        if (currentSlide < 4) {
+          vibrantChildren = [];
+          for (let p of particles) p.tieneVibrantes = false;
+        }
+
+        // Al entrar al Slide 7, reiniciamos el estado de las jóvenes
+        if (currentSlide === 6) {
+          for (let p of particles) {
+            if (p.tipo === 'joven') {
+              p.haCrecido = false;
+              p.escalaExtra = 1;
+              // Las reubicamos aleatoriamente para evitar que aparezcan ya cruzadas
+              p.pos = createVector(random(width), random(height));
+            }
+          }
+        }
+      });
+    }
+
+    function draw() {
+      if (limpiarFondo) {
+        clear(); // Borrón total transparente
+        limpiarFondo = false;
+      } else {
+        // Estela con fondo transparente usando destination-out
+        drawingContext.globalCompositeOperation = 'destination-out';
+        noStroke();
+        fill(255, 70); // Alpha 70 dicta la velocidad de desvanecimiento
+        rect(0, 0, width, height);
+        drawingContext.globalCompositeOperation = 'source-over'; // Volver a modo normal
+      }
+
+      gestionarPoblacion();
+
+      // Actualizar y pintar partículas principales
+      for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.update(currentSlide, i);
+        p.display();
+        if (p.isDead) particles.splice(i, 1);
+      }
+
+      // Actualizar partículas vibrantes hijas
+      for (let i = vibrantChildren.length - 1; i >= 0; i--) {
+        let v = vibrantChildren[i];
+        v.update(currentSlide);
+        v.display();
+        if (v.isDead || currentSlide < 4) vibrantChildren.splice(i, 1);
+      }
+    }
+
+    function gestionarPoblacion() {
+      // SLIDE 2 (Índice 1) en adelante: Nace el combo del Fórum
+      if (currentSlide >= 1) {
+        let forumCount = particles.filter(p => p.tipo === 'forum').length;
+        if (forumCount < 35) {
+          particles.push(new Particle('forum'));
+        }
+      } else {
+        // Si estamos en el Slide 1, garantizamos que no exista Fórum y las viejas sean grises
+        particles = particles.filter(p => p.tipo !== 'forum');
+        for (let p of particles) {
+          if (p.tipo === 'vieja') p.colTarget = [140, 140, 140];
+        }
+      }
+    }
+
+    class Particle {
+      constructor(tipoInicial) {
+        this.pos = createVector(random(width), random(height));
+        this.vel = p5.Vector.random2D().mult(random(1, 2));
+        this.acc = createVector(0, 0);
+        this.tipo = tipoInicial;
+
+        this.tipoOriginal = tipoInicial; // <-- EL SEGURO NUEVO PA' RECORDAR QUÉ ERA
+
+        this.isDead = false;
+        this.vida = 255;
+        this.escalaExtra = 1;
+        this.radioBase = (this.tipo === 'forum' ? 6 : 4) * sF;
+
+        this.colActual = [140, 140, 140];
+        this.colTarget = [140, 140, 140];
+        this.tieneVibrantes = false;
+        this.haCrecido = false; // Bandera para controlar el crecimiento permanente en Slide 7
+        this.velocidadMuerte = random(0.2, 0.8);
+      }
+
+      update(slide, idx) {
+        // Comportamiento base de normalización
+        this.escalaExtra = lerp(this.escalaExtra, 1, 0.08);
+
+        // Control base de vida (excepto jóvenes y viejas en slide 2, donde lo gestionamos manualmente)
+        if (slide !== 1 || this.tipo === 'forum') {
+          let targetVida = 255;
+          if (slide === 10 && this.tipo !== 'joven') targetVida = 0;
+          if (slide === 2 && this.tipo === 'joven') targetVida = 0; // Ocultar jóvenes en Slide 3
+          if (slide === 3 && this.tipo !== 'forum') targetVida = 0; // Ocultar todas excepto fórum en Slide 4
+          if (slide === 4 && this.tipo === 'joven') targetVida = 0; // Ocultar jóvenes en Slide 5
+          if (slide === 5 && this.tipo !== 'vieja') targetVida = 0; // Ocultar jóvenes y fórum en Slide 6
+          if (slide === 6 && this.tipo === 'forum') targetVida = 0; // Ocultar fórum en Slide 7
+          if (slide === 6 && this.tipo === 'vieja' && idx % 4 !== 0) targetVida = 0; // Reducir drásticamente la población de viejas
+          if ((slide === 7 || slide === 8 || slide === 9) && this.tipo === 'forum') targetVida = 0; // Ocultar fórum en Slide 8, 9 y 10
+          this.vida = lerp(this.vida, targetVida, 0.1);
+        }
+
+        switch (slide) {
+          case 0: // Slide 1: Aisladas
+            this.wander();
+            this.separacion(25);
+            break;
+
+          case 1: // Slide 2: Jóvenes izq->der, Fórum en bloque, Viejas lentas y desaparecen
+            if (this.tipo === 'forum') {
+              this.colTarget = [229, 2, 19]; // 100% Rojas
+              // Formar un bloque orgánico
+              let cols = 7;
+              let spacing = 35;
+              let fIdx = idx % 35;
+              let gridX = (fIdx % cols) * spacing - ((cols - 1) * spacing / 2);
+              let gridY = floor(fIdx / cols) * spacing - (4 * spacing / 2);
+              let target = createVector(width / 2 + gridX, height / 2 + gridY);
+
+              // Movimiento orgánico (como si el bloque respirara/flotara)
+              target.x += sin(frameCount * 0.03 + fIdx) * 15;
+              target.y += cos(frameCount * 0.04 + fIdx) * 15;
+
+              this.llegar(target);
+              this.acc.add(p5.Vector.random2D().mult(0.1)); // Movimiento sutil para no quedar estático
+              this.separacion(15);
+            } else if (this.tipo === 'joven') {
+              // Convergir hacia el bloque del fórum (centro)
+              let centro = createVector(width / 2, height / 2);
+              this.atraerHacia(centro, 0.06);
+
+              // Ligero sesgo a la derecha para mantener el flujo
+              this.acc.add(createVector(0.02, 0));
+
+              this.wander();
+              this.separacion(25);
+
+              // Convertirse en vieja SOLO al tocar el bloque del Fórum (distancia)
+              if (this.pos.dist(centro) < 110) {
+                this.tipo = 'vieja';
+              }
+
+              this.vida = lerp(this.vida, 255, 0.02); // Aparecer sutilmente
+            } else if (this.tipo === 'vieja') {
+              this.colTarget = [140, 140, 140]; // Nos aseguramos de que regresen a su gris base
+
+              // Abanicarse hacia la derecha saliendo del Fórum
+              let centro = createVector(width / 2, height / 2);
+              let escape = p5.Vector.sub(this.pos, centro);
+              escape.x = abs(escape.x) + 80; // Fuerza estrictamente positiva en X (hacia la derecha)
+              escape.setMag(0.05);
+              this.acc.add(escape);
+
+              // Más lentas y continúan
+              this.vel.mult(0.96);
+              this.wander();
+
+              // Desaparecer al cabo de un rato
+              this.vida -= this.velocidadMuerte;
+
+              // Renacer como joven a la izquierda sutilmente
+              if (this.vida <= 0) {
+                this.tipo = 'joven';
+                this.pos.x = -15; // Justo dentro del borde izquierdo
+                this.pos.y = random(height * 0.1, height * 0.9);
+                this.vel.mult(0);
+                this.velocidadMuerte = random(0.2, 0.8);
+              }
+            }
+            break;
+
+          case 2: // Slide 3: Fórum persigue viejas pacíficamente
+            this.vel.mult(0.98); // Ralentiza ligeramente (término medio)
+            if (this.tipo === 'forum') {
+              this.colTarget = [229, 2, 19];
+              // Solo buscar viejas que sigan grises (colTarget[0] === 140)
+              let v = this.buscarCercana('vieja', (p) => p.colTarget[0] === 140);
+              if (v) this.atraerHacia(v.pos, 0.05); // Fuerza intermedia de 0.05
+              else this.wander();
+            } else if (this.tipo === 'vieja') {
+              let f = this.buscarCercana('forum');
+              if (f && this.pos.dist(f.pos) < 30) {
+                this.colTarget = [180, 100, 255]; // Tinte morado suave
+              }
+              this.wander();
+            } else {
+              this.wander();
+            }
+            break;
+
+          case 3: // Slide 4: Zoom Fórum + 3 colores (Ciudad, Academia, Industria)
+            if (this.tipo === 'forum') {
+              this.escalaExtra = lerp(this.escalaExtra, 8.0, 0.05); // Zoom mucho más pronunciado
+              let subTipo = idx % 3;
+              if (subTipo === 0) this.colTarget = [229, 2, 19];   // Ciudad (Rojo)
+              else if (subTipo === 1) this.colTarget = [250, 250, 250]; // Academia (Blanco)
+              else this.colTarget = [40, 40, 45];        // Industria (Negro/Gris oscuro)
+              this.buscarCentro(0.02);
+              this.separacion(65); // Mayor separación para acomodar su tamaño
+            } else {
+              this.wander(); // Se ocultan gracias al control global de vida
+            }
+            break;
+
+          case 4: // Slide 5: Viejas van al fórum y adquieren partículas vibrantes
+            if (this.tipo === 'forum') {
+              this.colTarget = [229, 2, 19]; // Rojas
+              this.escalaExtra = lerp(this.escalaExtra, 1, 0.08); // Regresan a tamaño normal
+
+              // Formar bloque orgánico igual que en Slide 2
+              let cols = 7;
+              let spacing = 35;
+              let fIdx = idx % 35;
+              let gridX = (fIdx % cols) * spacing - ((cols - 1) * spacing / 2);
+              let gridY = floor(fIdx / cols) * spacing - (4 * spacing / 2);
+              let target = createVector(width / 2 + gridX, height / 2 + gridY);
+
+              target.x += sin(frameCount * 0.03 + fIdx) * 15;
+              target.y += cos(frameCount * 0.04 + fIdx) * 15;
+
+              this.llegar(target);
+              this.acc.add(p5.Vector.random2D().mult(0.1));
+              this.separacion(15);
+            } else if (this.tipo === 'vieja') {
+              this.colTarget = [140, 140, 140]; // Grises
+
+              let centro = createVector(width / 2, height / 2);
+
+              if (!this.tieneVibrantes) {
+                this.atraerHacia(centro, 0.08); // Van hacia el fórum
+                if (this.pos.dist(centro) < 120) {
+                  this.tieneVibrantes = true; // Marcar que ya pasaron
+                  for (let k = 0; k < 2; k++) vibrantChildren.push(new VibrantChild(this));
+                }
+              } else {
+                // Ya atravesaron, van por su rumbo y se alejan del centro
+                this.wander();
+                if (this.pos.dist(centro) < 250) { // Ampliamos la zona de escape
+                  let escape = p5.Vector.sub(this.pos, centro).setMag(0.15); // Fuerza de escape mayor
+                  this.acc.add(escape);
+                }
+              }
+            }
+            break;
+
+          case 5: // Slide 6: Caminos fluyentes (Curvas de Lissajous)
+            if (this.tipo === 'vieja' && this.tieneVibrantes) {
+              let camino = idx % 3; // 3 caminos distintos
+              let tiempo = frameCount * 0.004 + (idx * 0.05);
+
+              let px, py;
+              if (camino === 0) {
+                // Figura 8 horizontal
+                px = width / 2 + cos(tiempo) * (width * 0.35);
+                py = height / 2 + sin(tiempo * 2) * (height * 0.25);
+              } else if (camino === 1) {
+                // Órbita inclinada
+                px = width / 2 + cos(tiempo * 1.5) * (width * 0.3) + sin(tiempo) * 40;
+                py = height / 2 + sin(tiempo * 1.5) * (height * 0.3) + cos(tiempo) * 40;
+              } else {
+                // Figura 8 vertical
+                px = width / 2 + sin(tiempo * 2) * (width * 0.25);
+                py = height / 2 + cos(tiempo) * (height * 0.35);
+              }
+
+              this.llegar(createVector(px, py));
+            } else {
+              this.wander();
+            }
+            break;
+
+          case 6: // Slide 7: Viejas y jóvenes vagan. Al cruzarse, jóvenes crecen permanentemente
+            if (this.tipo === 'vieja') {
+              this.wander(); // Solo vagan
+            } else if (this.tipo === 'joven') {
+              if (!this.haCrecido) {
+                let v = this.buscarCercana('vieja');
+                if (v && this.pos.dist(v.pos) < 30) { // Distancia reducida para que el choque sea más evidente
+                  this.haCrecido = true;
+                }
+              }
+              if (this.haCrecido) {
+                this.escalaExtra = lerp(this.escalaExtra, 5.0, 0.15); // Crecimiento permanente mucho más grande
+              }
+              this.wander();
+            }
+            break;
+
+          case 7: // Slide 8: Viejas (izquierda, rígido) vs Jóvenes (derecha, fluido)
+            if (this.tipo === 'vieja') {
+              // Patrón de Hexágonos (Múltiples hexágonos rotando rígidamente)
+              let cx = width * 0.25;
+              let cy = height * 0.5;
+
+              let grupo = floor(idx / 6); // 15 grupos de hexágonos (90 partículas)
+              let vertice = idx % 6;      // 6 vértices por hexágono
+
+              // Distribuir los 15 centros en una cuadrícula hexagonal (3 filas x 5 columnas)
+              let col = grupo % 5;
+              let fila = floor(grupo / 5);
+
+              let spacing = 55;
+              let cxOffset = (col - 2) * spacing;
+              let cyOffset = (fila - 1) * spacing * (sqrt(3) / 2);
+              if (fila % 2 !== 0) cxOffset += spacing / 2; // Stagger para encaje de panal
+
+              let centroHexX = cx + cxOffset;
+              let centroHexY = cy + cyOffset;
+
+              // Rotación rígida (saltos de 60 grados para mantener la forma hexagonal)
+              let tiempoContinuo = frameCount * 0.015;
+              let fase = (grupo % 3) * 0.3; // Desfase para que algunos giren en momentos distintos
+              let anguloSalto = floor(tiempoContinuo + fase) * (PI / 3);
+
+              let radioHex = 20; // Tamaño de cada hexágono individual
+              let anguloVertice = (vertice * TWO_PI / 6) + anguloSalto;
+
+              let px = centroHexX + cos(anguloVertice) * radioHex;
+              let py = centroHexY + sin(anguloVertice) * radioHex;
+
+              // Movimiento de persecución brusca
+              let target = createVector(px, py);
+              let deseada = p5.Vector.sub(target, this.pos);
+              if (deseada.mag() > 5) {
+                deseada.setMag(6);
+                let steer = p5.Vector.sub(deseada, this.vel);
+                steer.limit(0.8);
+                this.acc.add(steer);
+              } else {
+                this.vel.mult(0.5);
+              }
+            } else if (this.tipo === 'joven') {
+              // Patrón circular complejo (Phyllotaxis / Espiral de Girasol) - Fluido
+              let cx = width * 0.75;
+              let cy = height * 0.5;
+
+              let tiempo = frameCount * 0.01;
+              let phi = 137.508 * (PI / 180); // Ángulo de oro
+
+              // Respiración orgánica desde el centro
+              let c_base = 15 + sin(tiempo * 3 + idx * 0.1) * 3;
+
+              // Expansión y rotación circular fluida
+              let r = c_base * sqrt(idx);
+              let theta = idx * phi + tiempo * 1.5;
+
+              let px = cx + r * cos(theta);
+              let py = cy + r * sin(theta);
+
+              this.llegar(createVector(px, py));
+            }
+            break;
+
+          case 8: // Slide 9: Convergencia cruzada en el centro
+            {
+              if (this.tipo === 'forum') {
+                this.wander();
+                break; // Las ignoramos para que el update() las desvanezca
+              }
+
+              let cx = width / 2;
+              let cy = height / 2;
+
+              // 1. Calcular patrón HEXAGONAL (idéntico a Slide 8)
+              let grupoHex = floor(idx / 6);
+              let verticeHex = idx % 6;
+
+              let colHex = grupoHex % 5;
+              let filaHex = floor(grupoHex / 5);
+
+              let spacing = 55;
+              let cxOffset = (colHex - 2) * spacing;
+              let cyOffset = (filaHex - 1) * spacing * (sqrt(3) / 2);
+              if (filaHex % 2 !== 0) cxOffset += spacing / 2;
+
+              let tiempoContinuo = frameCount * 0.015;
+              let fase = (grupoHex % 3) * 0.3;
+              let anguloSalto = floor(tiempoContinuo + fase) * (PI / 3);
+
+              let radioHex = 20;
+              let anguloVertice = (verticeHex * TWO_PI / 6) + anguloSalto;
+
+              let baseX_hex = cxOffset + cos(anguloVertice) * radioHex;
+              let baseY_hex = cyOffset + sin(anguloVertice) * radioHex;
+
+              // 2. Calcular patrón PHYLLOTAXIS (Círculos) (idéntico a Slide 8)
+              let tiempoCir = frameCount * 0.01;
+              let phi = 137.508 * (PI / 180);
+              let c_base = 15 + sin(tiempoCir * 3 + idx * 0.1) * 3;
+              let r = c_base * sqrt(idx);
+              let theta = idx * phi + tiempoCir * 1.5;
+
+              let baseX_cir = r * cos(theta);
+              let baseY_cir = r * sin(theta);
+
+              let baseX, baseY;
+
+              // 3. Evaluar cruce de lados y cambio de comportamiento
+              // "Adoptan la forma del lado, pero conservan su color original"
+              if (this.tipo === 'vieja') {
+                this.colTarget = [140, 140, 140]; // Siempre Gris
+                if (baseX_hex > 0) {
+                  // Cayó a la derecha -> Se acopla a Círculos
+                  baseX = abs(baseX_cir);
+                  baseY = baseY_cir;
+                } else {
+                  // Se mantiene a la izquierda -> Hexágono
+                  baseX = baseX_hex;
+                  baseY = baseY_hex;
+                }
+              } else if (this.tipo === 'joven') {
+                this.colTarget = [203, 214, 21]; // Nuevo verde (cbd615)
+                if (baseX_cir < 0) {
+                  // Cayó a la izquierda -> Se acopla a Hexágonos
+                  baseX = -abs(baseX_hex);
+                  baseY = baseY_hex;
+                } else {
+                  // Se mantiene a la derecha -> Círculos
+                  baseX = baseX_cir;
+                  baseY = baseY_cir;
+                }
+              }
+
+              let px = cx + baseX;
+              let py = cy + baseY;
+
+              // 4. Aplicar físicas de movimiento correspondientes al lado
+              if (baseX < 0) {
+                // Movimiento brusco (Hexágono)
+                let target = createVector(px, py);
+                let deseada = p5.Vector.sub(target, this.pos);
+                if (deseada.mag() > 5) {
+                  deseada.setMag(6);
+                  let steer = p5.Vector.sub(deseada, this.vel);
+                  steer.limit(0.8);
+                  this.acc.add(steer);
+                } else {
+                  this.vel.mult(0.5);
+                }
+              } else {
+                // Movimiento fluido (Phyllotaxis)
+                this.llegar(createVector(px, py));
+              }
+            }
+            break;
+
+          case 9: // Slide 10: Ascenso con convergencia cruzada
+          case 10: // Slide 11: Mismo ascenso, pero jóvenes gigantes
+            {
+              if (slide === 10 && this.tipo === 'joven') {
+                this.escalaExtra = lerp(this.escalaExtra, 8.0, 0.05);
+              }
+
+              if (this.tipo === 'forum') {
+                this.wander();
+                break;
+              }
+
+              let cx = width / 2;
+              let cy = height / 2;
+
+              // 1. Calcular patrón HEXAGONAL
+              let grupoHex = floor(idx / 6);
+              let verticeHex = idx % 6;
+
+              let colHex = grupoHex % 5;
+              let filaHex = floor(grupoHex / 5);
+
+              let spacing = 55;
+              let cxOffset = (colHex - 2) * spacing;
+              let cyOffset = (filaHex - 1) * spacing * (sqrt(3) / 2);
+              if (filaHex % 2 !== 0) cxOffset += spacing / 2;
+
+              let tiempoContinuo = frameCount * 0.015;
+              let fase = (grupoHex % 3) * 0.3;
+              let anguloSalto = floor(tiempoContinuo + fase) * (PI / 3);
+
+              let radioHex = 20;
+              let anguloVertice = (verticeHex * TWO_PI / 6) + anguloSalto;
+
+              let baseX_hex = cxOffset + cos(anguloVertice) * radioHex;
+              let baseY_hex = cyOffset + sin(anguloVertice) * radioHex;
+
+              // 2. Calcular patrón PHYLLOTAXIS (Círculos)
+              let tiempoCir = frameCount * 0.01;
+              let phi = 137.508 * (PI / 180);
+              let c_base = 15 + sin(tiempoCir * 3 + idx * 0.1) * 3;
+              let r = c_base * sqrt(idx);
+              let theta = idx * phi + tiempoCir * 1.5;
+
+              let baseX_cir = r * cos(theta);
+              let baseY_cir = r * sin(theta);
+
+              let baseX, baseY;
+
+              // 3. Evaluar cruce de lados y cambio de comportamiento
+              if (this.tipo === 'vieja') {
+                this.colTarget = [140, 140, 140]; // Siempre Gris
+                if (baseX_hex > 0) {
+                  baseX = abs(baseX_cir);
+                  baseY = baseY_cir;
+                } else {
+                  baseX = baseX_hex;
+                  baseY = baseY_hex;
+                }
+              } else if (this.tipo === 'joven') {
+                this.colTarget = [203, 214, 21]; // Nuevo verde (cbd615)
+                if (baseX_cir < 0) {
+                  baseX = -abs(baseX_hex);
+                  baseY = baseY_hex;
+                } else {
+                  baseX = baseX_cir;
+                  baseY = baseY_cir;
+                }
+              }
+
+              let currentZoom = 1.0;
+              if (slide === 10 && this.tipo === 'joven') {
+                // Aprovechamos la escala extra para alejar las partículas de forma suave
+                currentZoom = 1.0 + (this.escalaExtra - 1.0) * 0.4;
+              }
+              baseX *= currentZoom;
+              baseY *= currentZoom;
+
+              let px = cx + baseX;
+
+              // 4. Calcular 'py' con ascenso continuo y reinicio
+              let rawPY = cy + baseY - (frameCount * 2.5);
+              let m = 100; // Margen aumentado por el tamaño gigante de las partículas
+              let h = height + m * 2;
+              let py = ((rawPY + m) % h + h) % h - m;
+
+              // Detectamos el salto del wrap en cualquier dirección
+              if (abs(py - this.pos.y) > height * 0.5) {
+                this.pos.y = py;
+                this.pos.x = px;
+              }
+
+              // 5. Aplicar físicas
+              if (baseX < 0) {
+                // Movimiento brusco (Hexágono)
+                let target = createVector(px, py);
+                let deseada = p5.Vector.sub(target, this.pos);
+                if (deseada.mag() > 5) {
+                  deseada.setMag(6);
+                  let steer = p5.Vector.sub(deseada, this.vel);
+                  steer.limit(0.8);
+                  this.acc.add(steer);
+                } else {
+                  this.vel.mult(0.5);
+                }
+              } else {
+                // Movimiento fluido (Phyllotaxis)
+                this.llegar(createVector(px, py));
+              }
+            }
+            break;
+
+          case 11: // Slide 12: Silueta arquitectónica (El Fórum)
+          case 12:
+            {
+              let total = particles.length;
+              let u = idx / total;
+              let fx, fy;
+
+              let w015 = width * 0.15;
+              let w030 = width * 0.30;
+              let w085 = width * 0.90; // Techo se extiende bastante a la derecha
+
+              // Aplicamos una corrección vertical para mantener la proporción
+              // ya que el canvas ahora es la mitad de ancho
+              let baseH = 0.85;
+              let vScale = 0.5; // Ajuste de altura proporcional al nuevo ancho
+              let h025 = height * (baseH - 0.60 * vScale);
+              let h040 = height * (baseH - 0.45 * vScale);
+              let h070 = height * (baseH - 0.10 * vScale);
+              let h080 = height * baseH; // Suelo
+
+              // Helper para la inclinación del techo principal
+              let getRoofY = (x) => map(x, w030, w085, h025, h070);
+
+              let setSlide4Colors = () => {
+                let subTipo = idx % 3;
+                if (subTipo === 0) this.colTarget = [229, 2, 19];   // Ciudad (Rojo)
+                else if (subTipo === 1) this.colTarget = [250, 250, 250]; // Academia (Blanco)
+                else this.colTarget = [40, 40, 45];        // Industria (Negro/Gris oscuro)
+              };
+
+              if (u < 0.35) {
+                // Techo principal y alero (Color Jóvenes)
+                this.colTarget = [203, 214, 21];
+                let uRoof = u / 0.35;
+                if (uRoof < 0.25) {
+                  // Alero izquierdo (sube hacia el pico)
+                  let t = uRoof / 0.25;
+                  fx = lerp(w015, w030, t);
+                  fy = lerp(h040, h025, t);
+                } else {
+                  // Techo inclinado (baja hacia la derecha)
+                  let t = (uRoof - 0.25) / 0.75;
+                  fx = lerp(w030, w085, t);
+                  fy = lerp(h025, h070, t);
+                }
+              } else if (u < 0.60) {
+                // Columnas (6 columnas en el lado izquierdo)
+                setSlide4Colors();
+                let uCols = (u - 0.35) / 0.25;
+                let numCols = 6;
+                let colIndex = floor(uCols * numCols);
+                let t = (uCols * numCols) % 1;
+
+                fx = lerp(w015 + 15, w030 - 15, colIndex / (numCols - 1));
+                let roofY = lerp(h040, h025, colIndex / (numCols - 1));
+                fy = lerp(roofY, h080, t);
+              } else if (u < 0.85) {
+                // Paredes de Cristal
+                let uGlass = (u - 0.60) / 0.25;
+                let glassLeft = w030 + 5;
+                let glassRight = width * 0.78;
+
+                if (uGlass < 0.35) {
+                  // Pared izquierda
+                  setSlide4Colors();
+                  let t = uGlass / 0.35;
+                  fx = glassLeft;
+                  fy = lerp(getRoofY(glassLeft), h080, t);
+                } else if (uGlass < 0.70) {
+                  // Suelo del cristal -> Viejas (Gris)
+                  this.colTarget = [140, 140, 140];
+                  let t = (uGlass - 0.35) / 0.35;
+                  fx = lerp(glassLeft, glassRight, t);
+                  fy = h080;
+                } else {
+                  // Pared derecha
+                  setSlide4Colors();
+                  let t = (uGlass - 0.70) / 0.30;
+                  fx = glassRight;
+                  fy = lerp(getRoofY(glassRight), h080, t);
+                }
+              } else {
+                // Detalles internos del cristal y base
+                let uDet = (u - 0.85) / 0.15;
+                let glassLeft = w030 + 5;
+                let glassRight = width * 0.78;
+
+                if (uDet < 0.5) {
+                  // Línea de cristal intermedia (transversal) -> Paredes
+                  setSlide4Colors();
+                  let t = uDet / 0.5;
+                  fx = lerp(glassLeft, glassRight, t);
+                  let midLeft = (getRoofY(glassLeft) + h080) / 2;
+                  let midRight = (getRoofY(glassRight) + h080) / 2;
+                  fy = lerp(midLeft, midRight, t);
+                } else {
+                  // Línea de base general -> Viejas (Gris)
+                  this.colTarget = [140, 140, 140];
+                  let t = (uDet - 0.5) / 0.5;
+                  fx = lerp(w015, w085, t);
+                  fy = h080;
+                }
+              }
+              // Movimiento orgánico muy sutil (amplitud de 2 píxeles)
+              fx += sin(frameCount * 0.02 + idx) * 2;
+              fy += cos(frameCount * 0.025 + idx) * 2;
+
+              this.llegar(createVector(fx, fy));
+            }
+            break;
+
+          default:
+            this.wander();
+            break;
+        }
+
+        // Físicas generales
+        this.vel.add(this.acc);
+        this.vel.limit(3.5);
+        this.pos.add(this.vel);
+        this.acc.mult(0);
+
+        for (let c = 0; c < 3; c++) {
+          this.colActual[c] = lerp(this.colActual[c], this.colTarget[c], 0.05);
+        }
+
+        if (slide !== 9 && slide !== 7) this.revisarBordes();
+      }
+
+      // --- STEERING ---
+      comportamientoEnjambre() {
+        let fCentro = p5.Vector.sub(createVector(width / 2, height / 2), this.pos).mult(0.01);
+        this.acc.add(fCentro);
+        this.separacion(25);
+        this.wander();
+      }
+
+      llegar(target) {
+        let deseada = p5.Vector.sub(target, this.pos);
+        let d = deseada.mag();
+        let velocidad = (d < 100) ? map(d, 0, 100, 0, 4) : 4;
+        deseada.setMag(velocidad);
+        let steer = p5.Vector.sub(deseada, this.vel);
+        steer.limit(0.15);
+        this.acc.add(steer);
+      }
+
+      atraerHacia(target, fuerza) {
+        this.acc.add(p5.Vector.sub(target, this.pos).setMag(fuerza));
+      }
+
+      buscarCentro(fuerza) {
+        this.atraerHacia(createVector(width / 2, height / 2), fuerza);
+      }
+
+      buscarCercana(tipoBuscado, condition = null) {
+        let rec = Infinity, candidata = null;
+        for (let p of particles) {
+          if (p.tipo === tipoBuscado && p !== this && p.vida > 50) { // Ignorar partículas invisibles
+            if (condition && !condition(p)) continue; // Ignorar si no cumple la condición opcional
+            let d = this.pos.dist(p.pos);
+            if (d < rec) { rec = d; candidata = p; }
+          }
+        }
+        return candidata;
+      }
+
+      wander() {
+        this.acc.add(p5.Vector.random2D().mult(0.12));
+      }
+
+      separacion(distDeseada) {
+        let steer = createVector(0, 0), count = 0;
+        for (let p of particles) {
+          let d = this.pos.dist(p.pos);
+          if (d > 0 && d < distDeseada) {
+            steer.add(p5.Vector.sub(this.pos, p.pos).normalize().div(d));
+            count++;
+          }
+        }
+        if (count > 0) {
+          steer.div(count);
+          if (steer.mag() > 0) steer.setMag(0.08);
+          this.acc.add(steer);
+        }
+      }
+
+      display() {
+        noStroke();
+        let vBase = max(0, this.vida);
+        if (vBase === 0) return;
+
+        let distBordeX = min(this.pos.x, width - this.pos.x);
+        let distBordeY = min(this.pos.y, height - this.pos.y);
+        let distBorde = min(distBordeX, distBordeY);
+        let fadeBorde = map(distBorde, 0, 80, 0, 1, true);
+        vBase *= fadeBorde;
+        if (vBase <= 0) return;
+
+        let c = this.colActual;
+        if (this.tipo === 'joven' && currentSlide < 11) {
+          c = [203, 214, 21];
+        }
+
+        let dBase = this.radioBase * 2 * this.escalaExtra;
+
+        // Titilar (Shimmering - variación sutil de opacidad)
+        let twinkle = sin(frameCount * 0.1 + this.pos.x * 0.05 + this.pos.y * 0.05);
+        let v = vBase * (0.85 + 0.15 * twinkle);
+
+        // Aura especial del Slide 7 para las jóvenes
+        if (this.tipo === 'joven' && this.haCrecido && currentSlide === 6) {
+          fill(c[0], c[1], c[2], v * 0.3);
+          ellipse(this.pos.x, this.pos.y, dBase * 1.6);
+        }
+
+        // Efecto de latido/sonar (un anillo de energía que se expande y desvanece)
+        let pulseProgress = (frameCount * 0.03 + this.pos.x * 0.02 + this.pos.y * 0.02) % 1.0;
+        let dPulse = dBase + (pulseProgress * dBase * 1.5); // Crece hasta 2.5 veces su tamaño
+        let alphaPulse = v * (1.0 - pulseProgress) * 0.4; // Se desvanece gradualmente
+
+        fill(c[0], c[1], c[2], alphaPulse);
+        ellipse(this.pos.x, this.pos.y, dPulse);
+
+        // Cuerpo principal nítido
+        fill(c[0], c[1], c[2], v);
+        ellipse(this.pos.x, this.pos.y, dBase);
+      }
+
+      revisarBordes() {
+        if (this.pos.x < -20) this.pos.x = width + 20;
+        if (this.pos.x > width + 20) this.pos.x = -20;
+        if (this.pos.y < -20) this.pos.y = height + 20;
+        if (this.pos.y > height + 20) this.pos.y = -20;
+      }
+    }
+
+    class VibrantChild {
+      constructor(padre) {
+        this.padre = padre;
+        this.offset = p5.Vector.random2D().mult(random(10, 22));
+        this.col = [floor(random(200, 255)), floor(random(100, 255)), floor(random(0, 255))];
+        this.isDead = false;
+      }
+
+      update(slide) {
+        if (!this.padre || this.padre.isDead) this.isDead = true;
+
+        if (slide === 5) {
+          // En el Slide 6, en vez de rotar, se alinean perpendicularmente
+          // al movimiento de su padre para engrosar el camino (haciendo "carriles")
+          if (this.padre.vel.mag() > 0.1) {
+            let v = this.padre.vel.copy().normalize();
+            // Usamos si el índice de color es par o impar para ubicarlas a la izq o der
+            let angulo = (this.col[0] % 2 === 0) ? HALF_PI : -HALF_PI;
+            let targetOffset = p5.Vector.fromAngle(v.heading() + angulo).mult(15);
+            this.offset.lerp(targetOffset, 0.1);
+          }
+        } else {
+          this.offset.rotate(0.04);
+        }
+      }
+
+      display() {
+        if (currentSlide >= 6) return; // Ocultar en slide 7 en adelante
+        noStroke();
+        let vBase = max(0, this.padre.vida);
+        if (vBase === 0) return;
+
+        let px = this.padre.pos.x + this.offset.x;
+        let py = this.padre.pos.y + this.offset.y;
+
+        let distBordeX = min(px, width - px);
+        let distBordeY = min(py, height - py);
+        let distBorde = min(distBordeX, distBordeY);
+        let fadeBorde = map(distBorde, 0, 80, 0, 1, true);
+        vBase *= fadeBorde;
+        if (vBase <= 0) return;
+
+        // Titilar más rápido para las hijas
+        let twinkle = sin(frameCount * 0.15 + px * 0.1);
+        let v = vBase * (0.8 + 0.2 * twinkle);
+        let dBase = 4.5 * sF;
+
+        // Latido/Sonar
+        let pulseProgress = (frameCount * 0.05 + px * 0.05) % 1.0;
+        let alphaPulse = v * (1.0 - pulseProgress) * 0.5;
+
+        fill(this.col[0], this.col[1], this.col[2], alphaPulse);
+        ellipse(px, py, dBase + pulseProgress * dBase * 1.2);
+
+        // Cuerpo central
+        fill(this.col[0], this.col[1], this.col[2], v);
+        ellipse(px, py, dBase);
+      }
+    }
+
+    function windowResized() {
+      resizeCanvas(windowWidth / 2, windowHeight);
+    }
+
+  </script>
 </body>
+
 </html>
